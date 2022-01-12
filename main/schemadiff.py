@@ -25,16 +25,18 @@ with open('../main/config.json', 'r') as config_params:
     load_config = json.loads(config_)
 
 logger.subLog_('Available Servers')
-key_length = len(load_config['ec2_keys'])
-for _id in range(0, key_length):
-    for __server in load_config["ec2_keys"][_id]:
-        print(__server, '-', load_config["ec2_keys"][_id][__server])
+__key_length = len(load_config['ec2_keys'])
+for __id in range(0, __key_length):
+    for __server in load_config["ec2_keys"][__id]:
+        print(__server, '-', load_config["ec2_keys"][__id][__server])
 
-key_length = len(load_config['working_directories'])
+"""
 logger.subLog_('Working Directories')
-for _id in range(0, key_length):
-    for __dir in load_config["working_directories"][_id]:
-        print(__dir, '->', load_config["working_directories"][_id][__dir])
+___key_length = len(load_config['working_directories'])
+for ___id in range(0, ___key_length):
+    for ___dir in load_config["working_directories"][___id]:
+        print(___dir, '->', load_config["working_directories"][___id][___dir])
+"""
 
 
 class config_decoder(object):
@@ -91,8 +93,30 @@ class config_decoder(object):
             logger_c.error('Found error while accessing working directories config.')
 
 
+class properties(config_decoder):
+
+    def __init__(self):
+        super().__init__()
+        self.working_dirs_ = []
+        self.key_length_ = len(load_config['working_directories'])
+        for _id_ in range(0, self.key_length_):
+            for _dir_ in load_config["working_directories"][_id_]:
+                self.working_dirs_.append({_dir_: load_config["working_directories"][_id_][_dir_]})
+
+    def check_directories(self):
+        try:
+            logger.subLog_('Directory Checklist')
+            for _id in range(0, self.key_length_):
+                for _dir in self.working_dirs_[_id]:
+                    if pl.Path(self.working_dirs_[_id][_dir]).exists():
+                        print(_dir, '->', 'exists')
+                    else:
+                        print(_dir, '->', 'does not exists, creating directory at the moment.')
+                        pl.Path(self.working_dirs_[_id][_dir]).mkdir()
+        except NotADirectoryError as nae:
+            logger_c.error('Found error while checking working directories')
+
+
 if __name__ == '__main__':
-    """
-    json_decoder = config_decoder()
-    json_decoder.get_wDirs('cur_dir')
-"""
+    props = properties()
+    props.check_directories()
