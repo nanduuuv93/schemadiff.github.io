@@ -5,6 +5,8 @@ import logging
 from main.log import *
 from rich import print
 from rich.console import Console
+import mysql.connector as mysql
+from mysql.connector import Error
 
 logger_c = logging.getLogger('schemaDiff')
 logger_c.setLevel(logging.DEBUG)
@@ -15,7 +17,7 @@ consoleHandler.setLevel(logging.DEBUG)
 consoleHandler.setFormatter(log_format)
 logger_c.addHandler(consoleHandler)
 
-logger_c.info('Schemadiff Database Evaluator Command Line Interface')
+logger_c.info('Schemadiff Database Evaluator Command Line Interface (version 2.0)')
 logger_c.debug('Loading ec2 keys for database servers')
 
 time.sleep(0.1)
@@ -24,7 +26,7 @@ with open('../main/config.json', 'r') as config_params:
     config_ = config_params.read()
     load_config = json.loads(config_)
 
-logger.subLog_('----------Available Servers----------')
+logger.subLog_('---------< Available Servers >---------')
 __key_length = len(load_config['ec2_keys'])
 for __id in range(0, __key_length):
     for __server in load_config["ec2_keys"][__id]:
@@ -37,6 +39,9 @@ for ___id in range(0, ___key_length):
     for ___dir in load_config["working_directories"][___id]:
         print(___dir, '->', load_config["working_directories"][___id][___dir])
 """
+
+schema_config = {'host': 'localhost', 'port': '3306', 'user': 'schemaUser', 'password': 'schemaUser@@1',
+                 'database': 'information_schema'}
 
 
 class config_decoder(object):
@@ -106,12 +111,11 @@ class properties(config_decoder):
     def check_directories(self):
         """
         Check for directories required for the tool, the paths about directories are inherited from config.json.
-        If a directory is missing in the system a new directory is created, this is essential for file operations in
-        schemadiff tool to export and compare raw schema files.
-        :return:
+        If a directory is missing in the system a new directory is created, this is essential for file operations
+        in schemadiff tool to export and compare raw schema files.
         """
         try:
-            logger.subLog_('---------Directory Checklist---------')
+            logger.subLog_('--------< Directory Checklist >--------')
             for _id in range(0, self.key_length_):
                 for _dir in self.working_dirs_[_id]:
                     if pl.Path(self.working_dirs_[_id][_dir]).exists():
@@ -123,6 +127,41 @@ class properties(config_decoder):
             logger_c.error('Found error while checking working directories')
 
 
+class mysql_connect(properties, config_decoder):
+
+    def __init__(self, ):
+        super().__init__()
+        self._config = schema_config
+        self._connect = None
+        self._name = None
+        self._database_schemas = list()
+
+    def get_cursor(self):
+        try:
+            self._connect = mysql.connect(**self._config, connect_timeout=5)
+            if self._connect.is_connected():
+                # logger.debug(f'Connection established successfully with {self.name} database.')
+                return self._connect.cursor()
+        except Error as mysql_connect_err:
+            logger_c.error(f'Found error while connecting to {self._name} database.')
+
+    def select_dbs(self):
+        try:
+            logger.subLog_('--------< - Exportable Schemas - >--------')
+            fetch_dbs = "select distinct(TABLE_SCHEMA), count(TABLE_NAME) Tables from information_schema.TABLES " \
+                        "where TABLE_SCHEMA not in ('mysql','information_schema','sys','performance_schema') group by " \
+                        "TABLE_SCHEMA; "
+            cursor = self.get_cursor()
+            cursor.execute(fetch_dbs)
+            for database in cursor.fetchall():
+                self._database_schemas.append(database[0])
+                time.sleep(0.2)
+                logger.subLog_(f'{database[0]} -> {database[1]}')
+        except Error as mysql_tbl_err:
+            logger_c.error(f'Found error while populating tables.')
+
+
 if __name__ == '__main__':
-    props = properties()
-    props.check_directories()
+    db_ops = mysql_connect()
+    db_ops.check_directories()
+    db_ops.select_dbs()
