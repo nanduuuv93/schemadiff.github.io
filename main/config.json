@@ -1,0 +1,12 @@
+{
+  "ec2_keys": [
+    {"node_1": "13.235.16.53"},
+    {"node_2": "13.235.16.53"},
+    {"node_3": "localhost"}
+  ],
+  "working_directories": [
+    {"cur_dir": "/home/reports/cur_schema_dir"},
+    {"old_dir": "/home/reports/old_schema_dir"},
+    {"bkp_dir": "/home/reports/bkp_schema_dir"}
+  ]
+}
