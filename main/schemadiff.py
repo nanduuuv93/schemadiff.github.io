@@ -104,6 +104,12 @@ class properties(config_decoder):
                 self.working_dirs_.append({_dir_: load_config["working_directories"][_id_][_dir_]})
 
     def check_directories(self):
+        """
+        Check for directories required for the tool, the paths about directories are inherited from config.json.
+        If a directory is missing in the system a new directory is created, this is essential for file operations in
+        schemadiff tool to export and compare raw schema files.
+        :return:
+        """
         try:
             logger.subLog_('---------Directory Checklist---------')
             for _id in range(0, self.key_length_):
@@ -115,7 +121,6 @@ class properties(config_decoder):
                         pl.Path(self.working_dirs_[_id][_dir]).mkdir()
         except NotADirectoryError as nae:
             logger_c.error('Found error while checking working directories')
-
 
 
 if __name__ == '__main__':
