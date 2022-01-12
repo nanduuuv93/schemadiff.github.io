@@ -24,7 +24,7 @@ with open('../main/config.json', 'r') as config_params:
     config_ = config_params.read()
     load_config = json.loads(config_)
 
-logger.subLog_('Available Servers')
+logger.subLog_('----------Available Servers----------')
 __key_length = len(load_config['ec2_keys'])
 for __id in range(0, __key_length):
     for __server in load_config["ec2_keys"][__id]:
@@ -105,16 +105,17 @@ class properties(config_decoder):
 
     def check_directories(self):
         try:
-            logger.subLog_('Directory Checklist')
+            logger.subLog_('---------Directory Checklist---------')
             for _id in range(0, self.key_length_):
                 for _dir in self.working_dirs_[_id]:
                     if pl.Path(self.working_dirs_[_id][_dir]).exists():
-                        print(_dir, '->', 'exists')
+                        print(_dir, '->', 'directory exists')
                     else:
                         print(_dir, '->', 'does not exists, creating directory at the moment.')
                         pl.Path(self.working_dirs_[_id][_dir]).mkdir()
         except NotADirectoryError as nae:
             logger_c.error('Found error while checking working directories')
+
 
 
 if __name__ == '__main__':
