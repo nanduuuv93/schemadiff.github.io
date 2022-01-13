@@ -19,7 +19,7 @@ consoleHandler.setFormatter(log_format)
 logger_c.addHandler(consoleHandler)
 
 logger_c.info('Schemadiff Database Evaluator Command Line Interface (version 2.0)')
-logger_c.debug('Loading ec2 keys for database servers')
+logger_c.debug('Loading ec2 access keys for database servers')
 
 time.sleep(0.1)
 
