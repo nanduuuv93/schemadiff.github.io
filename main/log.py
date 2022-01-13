@@ -31,6 +31,10 @@ class logger(object):
         return cls.formatter(blue + 'LOG', logData)
 
     @classmethod
+    def debug(cls, logData):
+        return cls.formatter(red + 'DEBUG', logData)
+
+    @classmethod
     def warn(cls, logData):
         return cls.formatter(red + 'WARNING', logData)
 
