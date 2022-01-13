@@ -1,0 +1,14 @@
+{
+  "ec2_keys": [
+    {"kbnbfc_dv": "10.95.60.192"},
+    {"kbnbfc_console": "10.95.60.125"},
+    {"kbnbfc_findata": "10.95.60.83"}
+  ],
+  "working_directories": [
+    {"cur_dir": "/home/db.nandagopal.h/schemadiff_project/schema_dirs/cur_schema_dir"},
+    {"old_dir": "/home/db.nandagopal.h/schemadiff_project/schema_dirs/old_schema_dir"},
+    {"bkp_dir": "/home/db.nandagopal.h/schemadiff_project/schema_dirs/bkp_schema_dir"},
+    {"rep_dir": "/home/db.nandagopal.h/schemadiff_project/schema_dirs/rep_schema_dir"}
+  ]
+}
+
