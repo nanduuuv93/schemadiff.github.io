@@ -10,6 +10,4 @@ select concat('CREATE TABLE', ' ', c.TABLE_NAME, '(',
                       if(c.COLUMN_KEY = 'PRI', 'PRIMARY KEY', '')
                   ),
               ')')
-from information_schema.COLUMNS c
-where c.TABLE_SCHEMA in ('iot_wb')
-group by c.TABLE_SCHEMA, c.TABLE_NAME;
+from information_schema.COLUMNS c where c.TABLE_SCHEMA in ('iot_wb') group by c.TABLE_SCHEMA, c.TABLE_NAME;
